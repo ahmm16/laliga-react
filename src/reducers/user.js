@@ -34,6 +34,18 @@ const user = (state = initialState, action) => {
           user: { usersList: [] },
         });
       }
+    case "update_user":
+      try {
+        return update(state, {
+          ...state,
+          user: { $set: { ...action.payload } },
+        });
+      } catch (e) {
+        console.log("error: ", e.message);
+        return update(state, {
+          user: { usersList: [] },
+        });
+      }
     default:
       return state;
   }
