@@ -3,6 +3,7 @@ import { Form, Input, Button, Spin, Result } from "antd";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import { useUser } from "../context/user.context";
 import { loginApi } from "../services/reqresApi";
 
 const FormStyled = styled(Form)`
@@ -28,6 +29,7 @@ const ButtonStyled = styled(Button)`
   margin: 0px auto;
 `;
 const LoginForm = () => {
+  const { setToken } = useUser();
   let history = useHistory();
   const [form, setForm] = useState({});
   const [loginLoader, setLoginLoader] = useState(false);
@@ -49,10 +51,11 @@ const LoginForm = () => {
       if (response.error) {
         return setLoginResponse(-1);
       } else {
+        setToken(response.token);
         return history.push("/user");
       }
     },
-    [history]
+    [history, setToken]
   );
   const handleSubmit = useCallback(async () => {
     setLoginResponse(false);
