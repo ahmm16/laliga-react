@@ -68,7 +68,7 @@ const UserList = () => {
   }, [dispatch]);
   return (
     <Layout>
-      <ListContainer>
+      <ListContainer id="listContainer">
         {usersList &&
           usersList.map((item, index) => (
             <LinkStyled key={index} to={"/user/" + item.id}>

@@ -36,6 +36,7 @@ const OwnHeader = () => {
           </MenuItem>
           {token && (
             <MenuItem
+              id="logout-cypress"
               key="logout-menu"
               onClick={handleClick}
               icon={<LogoutOutlined />}
