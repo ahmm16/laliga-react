@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { LogoutOutlined } from "@ant-design/icons";
 import logo from "../assets/images/logo.jpg";
 import styled from "styled-components";
+import { useUser } from "../context/user.context";
 
 const Logo = styled.img`
   width: 100px;
@@ -21,7 +22,10 @@ const MenuItem = styled(Menu.Item)`
   height: 60px !important;
 `;
 const OwnHeader = () => {
-  const handleClick = () => {};
+  const { logOut, token } = useUser();
+  const handleClick = () => {
+    return logOut();
+  };
   const [top] = useState(0);
   return (
     <Affix offsetTop={top}>
@@ -30,6 +34,16 @@ const OwnHeader = () => {
           <MenuItem>
             <Logo src={logo} alt="logo" title="logo" />
           </MenuItem>
+          {token && (
+            <MenuItem
+              key="logout-menu"
+              onClick={handleClick}
+              icon={<LogoutOutlined />}
+            >
+              LogOut
+              <Link to="/login" />
+            </MenuItem>
+          )}
         </MenuStyled>
       </HeaderStyled>
     </Affix>

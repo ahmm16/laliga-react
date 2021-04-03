@@ -23,3 +23,23 @@ export const loginApi = async (data) => {
     return error.message + " - " + error.code;
   }
 };
+
+export const getUsersApi = async (current) => {
+  try {
+    const response = await fetch(`${URL}/users/?page=${current}`, {
+      method: "GET",
+      mode: "cors",
+      cache: "no-cache",
+      credentials: "same-origin",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      redirect: "follow",
+      referrerPolicy: "no-referrer",
+    });
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    return error.message + " - " + error.code;
+  }
+};
