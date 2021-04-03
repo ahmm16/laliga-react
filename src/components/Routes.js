@@ -1,6 +1,6 @@
 import React from "react";
 import { Route, Switch, Redirect } from "react-router-dom";
-import { Login, UserList, UserDetails } from "../views/";
+import { Login, UserList, UserDetails, NotFound } from "../views/";
 import { useUser } from "../context/user.context";
 
 const Routes = () => {
@@ -17,6 +17,7 @@ const Routes = () => {
       )}
       <Route component={UserList} exact path="/user" />
       <Route component={UserDetails} path="/user/:id" />
+      <Route component={NotFound} path="*" />
     </Switch>
   );
 };
