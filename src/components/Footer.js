@@ -1,5 +1,5 @@
 import React from "react";
-import { Layout, BackTop } from "antd";
+import { Layout } from "antd";
 import { HeartTwoTone } from "@ant-design/icons";
 import styled from "styled-components";
 
@@ -14,7 +14,9 @@ const FooterStyled = styled(Footer)`
 const OwnFooter = () => {
   return (
     <>
-      <BackTop />
+      {/* 
+      TODO: investigar problemas con StricMode
+      <BackTop /> */}
       <FooterStyled>
         Made with <HeartTwoTone /> by Alex
       </FooterStyled>
