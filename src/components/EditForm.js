@@ -119,7 +119,7 @@ const EditForm = ({ id, setShowForm, avatar }) => {
           <Button type="primary" htmlType="submit">
             Update
           </Button>
-          <Button type="secondar" onClick={() => setShowForm(false)}>
+          <Button type="secondary" onClick={() => setShowForm(false)}>
             Hide form
           </Button>
         </ButtonGrid>
