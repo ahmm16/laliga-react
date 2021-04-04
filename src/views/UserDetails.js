@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Layout, EditForm } from "../components";
 import { getUserApi, deleteUserApi } from "../services/reqresApi";
-import { useDispatch, useSelector } from "react-redux";
 import { Card, Spin, Button } from "antd";
 import { Result } from "antd";
 import { useParams } from "react-router-dom";
+import { useUser } from "../context/user.context";
 import styled from "styled-components";
 const { Meta } = Card;
 
@@ -27,9 +27,8 @@ const CardContainer = styled.div`
   flex-wrap: wrap;
 `;
 const UserDetails = () => {
+  const { user, setUser } = useUser();
   let { id } = useParams();
-  const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.user);
   const [userLoader, setUserLoader] = useState(false);
   const [deleteLoader, setDeleteLoader] = useState(false);
   const [deleteReponse, setDeleteReponse] = useState(0);
@@ -41,10 +40,6 @@ const UserDetails = () => {
         setDeleteLoader(true);
         setShowForm(false);
         await deleteUserApi(id);
-        dispatch({
-          type: "set_user_data",
-          payload: "",
-        });
         setDeleteLoader(false);
         return setDeleteReponse(1);
       } catch (err) {
@@ -52,25 +47,24 @@ const UserDetails = () => {
         return setDeleteReponse(-1);
       }
     },
-    [setShowForm, dispatch]
+    [setShowForm]
   );
-  useEffect(() => {
-    let mounted = true;
-    const getUserEffect = async (id) => {
+  const getUserEffect = useCallback(
+    async (id) => {
       try {
         setUserLoader(true);
         const response = await getUserApi(id);
         setUserLoader(false);
-        return dispatch({
-          type: "set_user_data",
-          payload: response.data,
-        });
+        return setUser(response.data);
       } catch (err) {
         return setUserLoader(false);
       }
-    };
+    },
+    [setUser]
+  );
+  useEffect(() => {
+    let mounted = true;
     if (mounted) {
-      //window.addEventListener("click", deleteUser);
       getUserEffect(id);
     }
     //borrar todas las suscripciones para evitar advertencias de pérdida de memoria
@@ -78,7 +72,7 @@ const UserDetails = () => {
       mounted = false;
       window.removeEventListener("click", deleteUser);
     };
-  }, [dispatch, id, deleteUser]);
+  }, [id, deleteUser, getUserEffect]);
   return (
     <Layout breadcrumb={true}>
       <CardContainer>

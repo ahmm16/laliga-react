@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Layout } from "../components";
 import { getUsersApi } from "../services/reqresApi";
-import { useDispatch, useSelector } from "react-redux";
+import { useUser } from "../context/user.context";
 import { Card, Spin, Pagination, Result } from "antd";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
@@ -32,45 +32,40 @@ const LinkStyled = styled(Link)`
   }
 `;
 const UserList = () => {
-  const dispatch = useDispatch();
-  const { usersList } = useSelector((state) => state.user.user);
+  const { user, setUser } = useUser();
   const [usersLoader, setUsersLoader] = useState(false);
 
+  const getUsersEffect = useCallback(async () => {
+    try {
+      setUsersLoader(true);
+      const response = await getUsersApi(1);
+      setUser({ usersList: response.data });
+
+      return setUsersLoader(false);
+    } catch (err) {
+      return setUsersLoader(false);
+    }
+  }, [setUser]);
   const onShowSizeChange = async (current) => {
     setUsersLoader(true);
     const response = await getUsersApi(current);
     setUsersLoader(false);
-    return dispatch({
-      type: "set_users_list",
-      payload: response.data,
-    });
+    return setUser({ usersList: response.data });
   };
   useEffect(() => {
     let mounted = true;
-    const getUsersEffect = async () => {
-      try {
-        setUsersLoader(true);
-        const response = await getUsersApi(1);
-        setUsersLoader(false);
-        return dispatch({
-          type: "set_users_list",
-          payload: response.data,
-        });
-      } catch (err) {
-        return setUsersLoader(false);
-      }
-    };
     if (mounted) {
       getUsersEffect();
     }
     //borrar todas las suscripciones para evitar advertencias de pérdida de memoria
     return () => (mounted = false);
-  }, [dispatch]);
+  }, [getUsersEffect]);
+  console.log("user", user);
   return (
     <Layout>
       <ListContainer>
-        {usersList &&
-          usersList.map((item, index) => (
+        {user?.usersList &&
+          user.usersList.map((item, index) => (
             <LinkStyled key={index} to={"/user/" + item.id}>
               <Card hoverable cover={<img alt="example" src={item.avatar} />}>
                 <Meta
@@ -81,11 +76,13 @@ const UserList = () => {
             </LinkStyled>
           ))}
       </ListContainer>
-      {!usersLoader && !usersList && (
+      {!usersLoader && !user.usersList && (
         <Result status="error" title="Users not found" />
       )}
       {usersLoader && <SpinStyled size="large" />}
-      {usersList && <PaginationStyled total={12} onChange={onShowSizeChange} />}
+      {user.usersList && (
+        <PaginationStyled total={12} onChange={onShowSizeChange} />
+      )}
     </Layout>
   );
 };

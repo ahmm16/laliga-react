@@ -4,6 +4,7 @@ import { getToken, removeToken } from "../helpers/auth";
 const UserContext = createContext();
 
 export const UserProvider = (props) => {
+  const [user, setUser] = useState({});
   const [token, setToken] = useState(getToken());
   const logOut = () => {
     removeToken();
@@ -15,11 +16,13 @@ export const UserProvider = (props) => {
   //Memorized token
   const value = useMemo(() => {
     return {
+      user,
+      setUser,
       token,
       setToken,
       logOut,
     };
-  }, [token, setToken]);
+  }, [user, token]);
   return <UserContext.Provider value={value} {...props}></UserContext.Provider>;
 };
 
